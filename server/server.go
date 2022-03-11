@@ -2,6 +2,7 @@ package server
 
 import (
 	"fmt"
+	"github.com/1107012776/EasyGO/tests/controller"
 	"io"
 	"io/ioutil"
 	"log"
@@ -30,7 +31,7 @@ func resource(w http.ResponseWriter, r *http.Request) {
 	case ".js":
 		w.Header().Set("content-type", "text/javascript")
 	default:
-		str := Index()
+		str := controller.Index()
 		io.WriteString(w, str)
 		return
 	}
