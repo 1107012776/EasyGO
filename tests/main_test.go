@@ -13,6 +13,6 @@ func Test_I_Am(t *testing.T) {
 }
 
 func Test_Server(t *testing.T) {
-	server.Listen("8081", "./")
+	server.Listen("8081", "D:/project/ecc/api/static")
 	assert.Equal(t, true, true)
 }

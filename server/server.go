@@ -13,12 +13,8 @@ import (
 var realPath *string
 
 func staticResource(w http.ResponseWriter, r *http.Request) {
-
 	path := r.URL.Path
 	fmt.Println(path)
-	io.WriteString(w, "hello world!")
-
-	return
 	request_type := path[strings.LastIndex(path, "."):]
 	switch request_type {
 	case ".css":
@@ -26,15 +22,33 @@ func staticResource(w http.ResponseWriter, r *http.Request) {
 	case ".js":
 		w.Header().Set("content-type", "text/javascript")
 	default:
-		fmt.Println(path)
 	}
-	fin, err := os.Open(*realPath + path)
-	defer fin.Close()
+	if isExist(*realPath + path) {
+		fin, err := os.Open(*realPath + path)
+		defer fin.Close()
+		if err != nil {
+			log.Fatal("static resource:", err)
+		}
+		fd, _ := ioutil.ReadAll(fin)
+		w.Write(fd)
+	} else {
+		io.WriteString(w, "404")
+	}
+}
+
+func isExist(path string) bool {
+	_, err := os.Stat(path)
 	if err != nil {
-		log.Fatal("static resource:", err)
+		if os.IsExist(err) {
+			return true
+		}
+		if os.IsNotExist(err) {
+			return false
+		}
+		fmt.Println(err)
+		return false
 	}
-	fd, _ := ioutil.ReadAll(fin)
-	w.Write(fd)
+	return true
 }
 
 //go run HttpServer.go --path=/tmp/static
