@@ -12,16 +12,27 @@ import (
 
 var realPath *string
 
-func staticResource(w http.ResponseWriter, r *http.Request) {
+type MyHttpServer struct {
+	content string
+}
+
+func resource(w http.ResponseWriter, r *http.Request) {
 	path := r.URL.Path
 	fmt.Println(path)
-	request_type := path[strings.LastIndex(path, "."):]
-	switch request_type {
+	var requestType string
+	requestType = "/"
+	if path != "" && path != "/" {
+		requestType = path[strings.LastIndex(path, "."):]
+	}
+	switch requestType {
 	case ".css":
 		w.Header().Set("content-type", "text/css")
 	case ".js":
 		w.Header().Set("content-type", "text/javascript")
 	default:
+		str := Index()
+		io.WriteString(w, str)
+		return
 	}
 	if isExist(*realPath + path) {
 		fin, err := os.Open(*realPath + path)
@@ -51,12 +62,9 @@ func isExist(path string) bool {
 	return true
 }
 
-//go run HttpServer.go --path=/tmp/static
 func Listen(port string, path string) {
-	//realPath = flag.String("path", "", "static resource path")
-	//flag.Parse()
 	realPath = &path
-	http.HandleFunc("/", staticResource)
+	http.HandleFunc("/", resource)
 	fmt.Println("Listen 0.0.0.0:" + port)
 	err := http.ListenAndServe(":"+port, nil)
 	if err != nil {
