@@ -1,12 +1,12 @@
 package tests
 
 import (
-	"github.com/1107012776/EasyGO/src"
+	"github.com/1107012776/EasyGO/core"
 	assert "github.com/magiconair/properties/assert"
 	"testing"
 )
 
 func Test_I_Am(t *testing.T) {
-	src.Hello()
+	core.Hello()
 	assert.Equal(t, true, true)
 }
